@@ -1,0 +1,1 @@
+heroku config:set APP_KEY=base64:0NtfcbBLZ/Bjh4PgMJTszrtE2VaHroriA6dg2nBKzhA=
