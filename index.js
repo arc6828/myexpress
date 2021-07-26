@@ -89,6 +89,11 @@ app.get('/vaccine/fetch', async (req, res) => {
     let response = await fetch('https://covid19-cdn.workpointnews.com/api/vaccine.json');
     let data = await response.json();
     console.log(data);
+
+    //SAVE TO FIRESTORE
+    let current_date = (new Date()).toISOString().split("T")[0];
+    await db.collection('vaccines').doc(current_date).set(data);
+
     //SEND TO BROWSER AS HTML OR TEXT
     let text = JSON.stringify(data);
     res.send(text)
