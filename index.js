@@ -23,7 +23,7 @@ const firebaseConfig = {
     messagingSenderId: process.env.messagingSenderId,
     appId: process.env.appId,
     measurementId: process.env.measurementId
-} 
+}
 const admin = firebase.initializeApp(firebaseConfig);
 const db = admin.firestore();
 
@@ -31,7 +31,7 @@ const db = admin.firestore();
 const fetch = require('node-fetch');
 
 //WEB
-const app = express();    
+const app = express();
 const port = 3000
 
 app.post('/webhook', line.middleware(config), (req, res) => {
@@ -49,11 +49,34 @@ async function handleEvent(event) {
     let chat = await db.collection('chats').add(event);
     console.log('Added document with ID: ', chat.id);
 
-    //console.log(event);
-    return client.replyMessage(event.replyToken, {
-        type: 'text',
-        text: event.message.text,
-    });
+    switch (event.message.text) {
+        case "covid":
+            // let newText = "สวัสดี เราเป็นบอทรายงานสถิติโควิดนะ";
+            let data = await getTodayCovid();
+            let newText = JSON.stringify(data);
+
+            return client.replyMessage(event.replyToken, {
+                type: 'text',
+                text: newText,
+            });
+            break;
+        default:
+            //console.log(event);
+            return client.replyMessage(event.replyToken, {
+                type: 'text',
+                text: event.message.text,
+            });
+    }
+}
+async function getTodayCovid() {
+    let current_date = (new Date()).toISOString().split("T")[0];
+    let doc = await db.collection('vaccines').doc(current_date).get();
+    // if (!doc.exists) {
+    //     console.log('No such document!');
+    // } else {
+    //     console.log('Document data:', doc.data());
+    // }
+    return doc.data();
 }
 
 // Respond with Hello World! on the homepage:
