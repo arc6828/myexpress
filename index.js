@@ -54,11 +54,8 @@ async function handleEvent(event) {
             // let newText = "สวัสดี เราเป็นบอทรายงานสถิติโควิดนะ";
             let data = await getTodayCovid();
             let newText = JSON.stringify(data);
-
-            return client.replyMessage(event.replyToken, {
-                type: 'text',
-                text: newText,
-            });
+            let payload = require('payload-vaccine.json');
+            return client.replyMessage(event.replyToken, payload);
             break;
         default:
             //console.log(event);
