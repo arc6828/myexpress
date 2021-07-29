@@ -13,7 +13,11 @@
                 },
                 {
                     "type": "text",
-                    "text": "world"
+                    "text": "${person.name}"
+                },
+                {
+                    "type": "text",
+                    "text": "${person.lastname}"
                 }
             ]
         }

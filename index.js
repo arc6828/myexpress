@@ -49,13 +49,25 @@ async function handleEvent(event) {
     let chat = await db.collection('chats').add(event);
     console.log('Added document with ID: ', chat.id);
 
+    // return client.replyMessage(event.replyToken, {
+    //     type: 'text',
+    //     text: event.message.text,
+    // });
+
+    //SWITCH FOR MANY CASES
     switch (event.message.text) {
+        case "flex":
+            let payload = require('./payload-vaccine.json');
+            return client.replyMessage(event.replyToken, payload);
+            break;
         case "covid":
             // let newText = "สวัสดี เราเป็นบอทรายงานสถิติโควิดนะ";
             let data = await getTodayCovid();
             let newText = JSON.stringify(data);
-            let payload = require('./payload-vaccine.json');
-            return client.replyMessage(event.replyToken, payload);
+            return client.replyMessage(event.replyToken, {
+                type: 'text',
+                text: newText,
+            });
             break;
         default:
             //console.log(event);
