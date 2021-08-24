@@ -18,34 +18,39 @@ const admin = firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 //Fetch or AXOIS
 const fetch = require('node-fetch');
+const axios = require('axios');
 
 //IMAGE TYPE
 const imageType = require('image-type');
+const FileType = require('file-type');
 
 async function uploadImageToFirebase() {
     console.log("You call this function !!!");
 
-    //IMAGE URL    
-    let url = "https://www.khaosod.co.th/wpapp/uploads/2017/11/panda-story_650_121014094259.jpg";
-    // console.log(url);
-    const response = await fetch(url);
-    //Buffer
-    const buffer = await response.buffer();
-    let filename = url.split('/').pop();
-    // console.log(buffer);
-    console.log(imageType(buffer).mime);
-    console.log(filename);
+    // IMAGE URL    
+    let url = "https://cdn.pixabay.com/photo/2016/05/24/16/48/mountains-1412683__340.png";
+    let response = await fetch(url);
+    // MAKE BUFFER
+    let buffer = await response.buffer();
+    // MAKE FILE NAME
+    let random_name = '_' + Math.random().toString(36).substr(2, 9);
+    let file_type = (await FileType.fromBuffer(buffer));
+    let filename = random_name + "." + file_type.ext;
 
-    //
+    console.log(random_name);
+    console.log(file_type);
+    console.log(filename);
+    console.log(new Uint8Array(buffer));
+
+    // SAVE TO FIREBASE STORAGE
     const imageRef = storage.ref().child(filename);
-    // CONVERT BUFFER TO BASE 64
-    let message = buffer.toString('base64');
-    console.log(message);
-    //SAVE TO FIREBASE
-    imageRef.putString(message, 'base64').then((snapshot) => {
+    let data = new Uint8Array(buffer);
+    let metadata = { contentType: file_type.mime };
+    imageRef.put(data , metadata ).then((snapshot) => {
         console.log('Uploaded a data_url string!');
     });
-
 }
 
 uploadImageToFirebase();
+
+

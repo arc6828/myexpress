@@ -50,6 +50,7 @@ async function handleEvent(event) {
 
     if(event.message.type === 'image'){
         console.log("This is an image!!!",event.message);
+        
         return client.replyMessage(event.replyToken, {
             type: 'text',
             text: "Thank for an image",
