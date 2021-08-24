@@ -41,24 +41,51 @@ app.post('/webhook', line.middleware(config), (req, res) => {
         .then((result) => res.json(result));
 });
 async function handleEvent(event) {
-    if (event.type !== 'message' || event.message.type !== 'text') {
+    console.log("HI", event.type, event.message.type);
+    // if (event.type !== 'message' || event.message.type !== 'text' ) {
+    if (event.type !== 'message' || !["text", "image"].includes(event.message.type)) {
+        console.log("ERROR", event.type);
         return Promise.resolve(null);
     }
+
+    if(event.message.type === 'image'){
+        console.log("This is an image!!!",event.message);
+        return client.replyMessage(event.replyToken, {
+            type: 'text',
+            text: "Thank for an image",
+        });
+    }
+
 
     // SAVE TO FIREBASE
     let chat = await db.collection('chats').add(event);
     console.log('Added document with ID: ', chat.id);
 
+    // console.log(event);
     // return client.replyMessage(event.replyToken, {
     //     type: 'text',
     //     text: event.message.text,
     // });
 
-    //SWITCH FOR MANY CASES
+    //SWITCH FOR MANY CASES 
     switch (event.message.text) {
+        case "test":
+            let payload_flex = require('./payloads/test.json');
+            let str_payload_flex = JSON.stringify(payload_flex);
+            let person = {
+                name: "CS",
+                lastname: "Computer Science",
+            }
+            payload_flex = JSON.parse(eval('`' + str_payload_flex + '`'));
+            return client.replyMessage(event.replyToken, payload_flex);
+            break;
         case "flex":
-            let payload = require('./payload-vaccine.json');
-            return client.replyMessage(event.replyToken, payload);
+            let payload_template = require('./payloads/template.json');
+            let str_payload_template = JSON.stringify(payload_template);
+            let vaccince = await getTodayCovid();
+            payload_template = JSON.parse(eval('`' + str_payload_template + '`'));
+            //console.log(payload_template);    
+            return client.replyMessage(event.replyToken, payload_template);
             break;
         case "covid":
             // let newText = "สวัสดี เราเป็นบอทรายงานสถิติโควิดนะ";
@@ -77,6 +104,7 @@ async function handleEvent(event) {
             });
     }
 }
+
 async function getTodayCovid() {
     let current_date = (new Date()).toISOString().split("T")[0];
     let doc = await db.collection('vaccines').doc(current_date).get();
@@ -87,6 +115,7 @@ async function getTodayCovid() {
     // }
     return doc.data();
 }
+
 
 // Respond with Hello World! on the homepage:
 app.get('/', function (req, res) {
