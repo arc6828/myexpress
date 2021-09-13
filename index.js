@@ -30,9 +30,32 @@ const db = admin.firestore();
 //Fetch or AXOIS
 const fetch = require('node-fetch');
 
+//FILE SYSTEM
+const FileType = require('file-type');
+const path = require("path");
+const os = require("os");
+const fs = require("fs");
+
 //WEB
 const app = express();
 const port = 3000
+
+app.get('/media', async function(req, res) {    
+    let filename = path.join(__dirname, "media.html");
+    res.sendFile(filename);
+});
+
+app.get('/api/media', async function(req, res) {
+    let response = await db.collection('medias').get();
+    let medias = response.docs.map(doc => doc.data());
+
+    let response2 = await db.collection('chats').get();
+    let chats = response2.docs.map(doc => doc.data());
+    console.log(medias);
+    res.send(JSON.stringify(medias) )       
+});
+
+
 
 app.post('/webhook', line.middleware(config), (req, res) => {
     //console.log(req);
@@ -120,7 +143,7 @@ async function getTodayCovid() {
 
 // Respond with Hello World! on the homepage:
 app.get('/', function (req, res) {
-    res.send('Hello World !')
+    res.send('<h1>Hello World !</h1><table border="1"><tr><td>Column 1</td><td>Column 2</td><td>Column 3</td></tr></table>')
 })
 
 // Respond to POST request on the root route (/), the application’s home page:

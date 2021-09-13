@@ -16,7 +16,7 @@ let new_fruits = fruits.map(function (item) {
                         "size": "sm"
                     }, {
                         "type": "text",
-                        "text": item.,
+                        "text": "",
                         "size": "sm",
                         "color": "#555555"
                     }
@@ -24,7 +24,7 @@ let new_fruits = fruits.map(function (item) {
                 "flex": 3
             }, {
                 "type": "text",
-                "text": item.",
+                "text": "",
                 "size": "sm",
                 "color": "#111111",
                 "align": "end"
